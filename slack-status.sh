@@ -75,10 +75,12 @@ else
   PAYLOAD="{\"profile\": {\"status_text\": ${TJSON}, \"status_emoji\": ${EJSON}, \"status_expiration\": ${EXP}}}"
 fi
 
-curl -sS -X POST \
+RESP=$(curl -sS -X POST \
   -H "Authorization: Bearer ${OAUTH_TOKEN}" \
   -H "Content-type: application/json; charset=utf-8" \
   -d "${PAYLOAD}" \
-  https://slack.com/api/users.profile.set
-echo
+  https://slack.com/api/users.profile.set)
 
+if ! echo "$RESP" | grep -q '"ok":true'; then
+  echo "Slack API error: $RESP" >&2
+fi
